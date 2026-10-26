@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const usersRoutes = require('./routes/users.routes');
+const postsRoutes = require('./routes/posts.routes');
 
 app.use(express.json());
 
@@ -13,6 +14,7 @@ app.get('/', (_req, res) => {
 });
 
 app.use('/users', usersRoutes);
+app.use('/posts', postsRoutes);
 
 app.use((_req, res) => {
   res.status(404).json({ error: 'Not found' });
