@@ -1,5 +1,4 @@
 const postsService = require('../services/posts.services');
-const usersService = require('../services/users.services');
 const { parsePositiveInteger, parsePagination, buildMeta } = require('../utils/pagination');
 
 const allowedSortBy = ['createdAt', 'updatedAt', 'likes'];
@@ -27,11 +26,6 @@ async function createPost(req, res, next) {
     return res.status(400).json({ error: 'imageUrl and authorId are required' });
   }
 
-  const user = await usersService.getUserById(authorId);
-  if (!user) {
-    return res.status(404).json({ error: 'User not found' });
-  }
-
   const data = {
     imageUrl: imageUrl.trim(),
     authorId,
@@ -53,6 +47,9 @@ async function createPost(req, res, next) {
     const post = await postsService.createPost(data);
     return res.status(201).json(post);
   } catch (error) {
+    if (error.code === 'P2003') {
+      return res.status(404).json({ error: 'User not found' });
+    }
     return next(error);
   }
 }
@@ -163,6 +160,9 @@ async function updatePost(req, res, next) {
     const post = await postsService.updatePost(id, data);
     return res.json(post);
   } catch (error) {
+    if (error.code === 'P2025') {
+      return res.status(404).json({ error: 'Post not found' });
+    }
     return next(error);
   }
 }
@@ -177,6 +177,9 @@ async function deletePost(req, res, next) {
     await postsService.deletePost(id);
     return res.status(204).end();
   } catch (error) {
+    if (error.code === 'P2025') {
+      return res.status(404).json({ error: 'Post not found' });
+    }
     return next(error);
   }
 }
