@@ -29,10 +29,6 @@ app.use((err, _req, res, _next) => {
     return res.status(409).json({ error: 'username or email already taken' });
   }
 
-  if (err.code === 'P2025') {
-    return res.status(404).json({ error: 'User not found' });
-  }
-
   console.error(err);
   return res.status(500).json({ error: 'Internal server error' });
 });
