@@ -149,6 +149,9 @@ async function updateUser(req, res, next) {
     const user = await usersService.updateUser(id, data);
     return res.json(user);
   } catch (error) {
+    if (error.code === 'P2025') {
+      return res.status(404).json({ error: 'User not found' });
+    }
     return next(error);
   }
 }
@@ -163,6 +166,9 @@ async function deleteUser(req, res, next) {
     await usersService.deleteUser(id);
     return res.status(204).end();
   } catch (error) {
+    if (error.code === 'P2025') {
+      return res.status(404).json({ error: 'User not found' });
+    }
     return next(error);
   }
 }
